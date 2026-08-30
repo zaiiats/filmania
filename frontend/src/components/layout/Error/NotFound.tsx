@@ -16,6 +16,8 @@ const StyledGoBackNotFound = styled.div`
   }
 `;
 
+
+
 function GoBackNotFound() {
   const navigate = useNavigate();
   return (

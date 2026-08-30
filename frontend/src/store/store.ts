@@ -8,13 +8,13 @@ import { useDispatch, useSelector } from "react-redux";
 interface UserInterface {
   username: string | null;
   email: string | null;
-  userData: null;
+  profilePicture: string | null;
 }
 
 const defaultUser: UserInterface = {
   username: null,
   email: null,
-  userData: null,
+  profilePicture: null,
 };
 
 const userSlice = createSlice({
@@ -24,7 +24,7 @@ const userSlice = createSlice({
     login(state, action: PayloadAction<UserInterface>) {
       state.username = action.payload.username;
       state.email = action.payload.email;
-      state.userData = action.payload.userData;
+      state.profilePicture = action.payload.profilePicture;
     },
     logout() {
       return { ...defaultUser };
@@ -44,5 +44,5 @@ export const store = configureStore({
 type StoreState = ReturnType<typeof store.getState>;
 type DispatchState = typeof store.dispatch;
 
-export const UseTypedSelector = useSelector.withTypes<StoreState>();
-export const UseTypedDispatch = useDispatch.withTypes<DispatchState>();
+export const useTypedSelector = useSelector.withTypes<StoreState>();
+export const useTypedDispatch = useDispatch.withTypes<DispatchState>();

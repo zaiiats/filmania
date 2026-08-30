@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import Logo from "./Logo";
 import { Link, useLocation } from "react-router-dom";
-import { UseTypedDispatch, UseTypedSelector } from "@/store/store";
+import { useTypedDispatch, useTypedSelector } from "@/store/store";
 import { useEffect } from "react";
 import Button from "../reusable/Button";
 
@@ -19,17 +19,15 @@ const LinksWrapper = styled.ul`
 `;
 
 export default function Nav() {
-  const dispatch = UseTypedDispatch();
-  const { username } = UseTypedSelector((store) => store.user);
-  const location = useLocation()
+  const dispatch = useTypedDispatch();
+  const { username } = useTypedSelector((store) => store.user);
+  const location = useLocation();
 
   useEffect(() => {
     //dispatch(login({ email: "1241234", userData: null, username: "dasfasdf" }));
   }, [dispatch]);
 
-  useEffect(()=>{
-
-  }, [location])
+  useEffect(() => {}, [location]);
 
   return (
     <StyledNav>
@@ -47,12 +45,12 @@ export default function Nav() {
           <>
             <Link to="/login">
               <li>
-                <Button type="filled">Login</Button>
+                <Button variant="filled">Login</Button>
               </li>
             </Link>
             <Link to="/signup">
               <li>
-                <Button type="outline">SignUp</Button>
+                <Button variant="outline">SignUp</Button>
               </li>
             </Link>
           </>

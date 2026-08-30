@@ -1,16 +1,19 @@
 interface ButtonInterface {
   size?: "small" | "big";
-  type?: "outline" | "filled";
+  variant?: "outline" | "filled";
   onClick?: () => void;
   children: ReactNode;
+  type?: "submit" | "reset" | "button";
+  style?: CSSProperties;
+  isDisabled?: boolean;
 }
 
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import styled from "styled-components";
 
 const StyledButton = styled.button<{
   $size: ButtonInterface["size"];
-  $type: ButtonInterface["type"];
+  $variant: ButtonInterface["variant"];
 }>`
   display: flex;
   align-items: center;
@@ -19,14 +22,14 @@ const StyledButton = styled.button<{
   padding: 0.5rem 0.65rem;
   font-size: 0.9rem;
   border-radius: var(--border-radius);
-  background-color: ${({ $type }) => {
-    return $type === "outline" ? "var(--bg)" : "var(--text-h)";
+  background-color: ${({ $variant }) => {
+    return $variant === "outline" ? "var(--bg)" : "var(--text-h)";
   }};
-  color: ${({ $type }) => {
-    return $type === "outline" ? "var(--text-h)" : "var(--bg)";
+  color: ${({ $variant }) => {
+    return $variant === "outline" ? "var(--text-h)" : "var(--bg)";
   }};
-  font-weight: ${({ $type }) => {
-    return $type === "outline" ? "400" : "600";
+  font-weight: ${({ $variant }) => {
+    return $variant === "outline" ? "400" : "600";
   }};
   transition: var(--transition);
 
@@ -40,12 +43,22 @@ const StyledButton = styled.button<{
 
 export default function Button({
   size = "small",
-  type = "outline",
+  variant = "outline",
   onClick,
+  type = "button",
+  isDisabled = false,
   children,
+  style,
 }: ButtonInterface) {
   return (
-    <StyledButton $size={size} $type={type} onClick={onClick}>
+    <StyledButton
+      style={style}
+      type={type}
+      $size={size}
+      $variant={variant}
+      onClick={onClick}
+      disabled={isDisabled}
+    >
       {children}
     </StyledButton>
   );
