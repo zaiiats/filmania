@@ -30,7 +30,9 @@ export default function Login() {
     },
   });
 
-  const { mutate } = useLoginMutation();
+  const { mutate, error, data } = useLoginMutation();
+
+  console.log(error?.message, data);
 
   async function onSubmit(data: LoginFormValues) {
     mutate(data);

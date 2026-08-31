@@ -28,5 +28,7 @@ export const login = async ({
     },
   };
 
+  throw new Error("FUCK YOU BUGAGAGA");
+
   return data.data;
 };
