@@ -5,6 +5,7 @@ import AuthCard, {
 } from "@/components/auth/AuthCard";
 import DatePicker from "@/components/auth/DatePicker";
 import Button from "@/components/reusable/Button";
+import { useSignupMutation } from "@/hooks/useSignupMutation";
 import { userSignupSchema, type SignupFormValues } from "@/utils/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
@@ -20,14 +21,16 @@ export default function Signup() {
     resolver: zodResolver(userSignupSchema),
     mode: "onBlur",
     defaultValues: {
-      date: "",
-      username: "",
-      email: "",
+      dateOfBirth: "2000-08-06",
+      username: "Zaiiats",
+      email: "Zaiiats@email.com",
     },
   });
 
+  const { mutate } = useSignupMutation();
+
   function onSubmit(data: SignupFormValues) {
-    console.log(data);
+    mutate(data);
     reset();
   }
 
@@ -55,13 +58,13 @@ export default function Signup() {
         <FormGroup>
           <label htmlFor="date">Date of birth</label>
           <Controller
-            name="date"
+            name="dateOfBirth"
             control={control}
             render={({ field: { value, onChange } }) => {
               return <DatePicker value={value} onChange={onChange} />;
             }}
           />
-          <p>{errors?.date && errors?.date.message}</p>
+          <p>{errors?.dateOfBirth && errors?.dateOfBirth.message}</p>
         </FormGroup>
         <ButtonsGroup>
           <Button style={{ width: "100%" }} type="reset" isDisabled={isLoading}>

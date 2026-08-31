@@ -17,6 +17,8 @@ import { useInitAuth } from "./hooks/useInitAuth";
 import Spinner from "./components/reusable/Spinner";
 import Account from "./pages/auth/Account";
 import type { ReactNode } from "react";
+import VerifyEmail from "./pages/auth/VerifyEmail";
+import { Toaster } from "sonner";
 
 const StyledRootLayout = styled.div`
   display: flex;
@@ -88,6 +90,10 @@ const router = createBrowserRouter([
           </Protected>
         ),
       },
+      {
+        path: "/verify-email",
+        element: <VerifyEmail />,
+      },
       { path: "*", element: <NotFound /> },
     ],
   },
@@ -97,6 +103,7 @@ function App() {
   return (
     <Provider store={store}>
       <QueryClientProvider client={queryClientInstance}>
+        <Toaster position="top-right" richColors theme="dark"/>
         <RouterProvider router={router} />
         <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>

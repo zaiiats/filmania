@@ -30,7 +30,7 @@ export const userLoginSchema = z.object({
 export const userSignupSchema = z.object({
   username: usernameSchema,
   email: emailSchema,
-  date: dateOfBirth,
+  dateOfBirth: dateOfBirth,
 });
 
 export type SignupFormValues = z.infer<typeof userSignupSchema>;
