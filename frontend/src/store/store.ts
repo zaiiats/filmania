@@ -9,12 +9,14 @@ interface UserInterface {
   username: string | null;
   email: string | null;
   profilePicture: string | null;
+  id: string | null;
 }
 
 const defaultUser: UserInterface = {
   username: null,
   email: null,
   profilePicture: null,
+  id: null,
 };
 
 const userSlice = createSlice({
@@ -25,6 +27,7 @@ const userSlice = createSlice({
       state.username = action.payload.username;
       state.email = action.payload.email;
       state.profilePicture = action.payload.profilePicture;
+      state.id = action.payload.id;
     },
     logout() {
       return { ...defaultUser };

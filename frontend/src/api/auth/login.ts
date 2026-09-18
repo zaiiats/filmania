@@ -1,34 +1,33 @@
-// import { axiosInstance } from "@/lib/axios";
+import { axiosInstance } from "@/lib/axios";
 
 export const login = async ({
   username,
-  email,
+  password,
   isSaved,
 }: {
   username: string;
-  email: string;
+  password: string;
   isSaved: boolean;
 }) => {
-  // const data = await axiosInstance.post("/login", {
-  //   username,
-  //   email,
-  //   isSaved,
-  // });
+  const data = await axiosInstance.post("/auth/login", {
+    username,
+    password,
+    isSaved,
+  });
 
-  console.log(username, email, isSaved);
+  console.log(data.data);
+  
 
-  const data = {
-    data: {
-      accessToken: "33452345124efasdf4321",
-      userData: {
-        username: "George",
-        email: "George123@gmail.com",
-        profilePicture: "https://picsum.photos/id/237/200/300",
-      },
-    },
-  };
-
-  throw new Error("FUCK YOU BUGAGAGA");
+  // const data = {
+  //   data: {
+  //     accessToken: "33452345124efasdf4321",
+  //     userData: {
+  //       username: "George",
+  //       password: "George123@gmail.com",
+  //       profilePicture: "https://picsum.photos/id/237/200/300",
+  //     },
+  //   },
+  // };
 
   return data.data;
 };

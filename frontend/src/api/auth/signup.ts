@@ -4,18 +4,17 @@ export const signup = async ({
   username,
   email,
   dateOfBirth,
+  password,
 }: {
   username: string;
   email: string;
   dateOfBirth: string;
+  password: string;
 }) => {
-  console.log("hi");
-
-  // await axiosInstance.post("/signup", {
-  //   username,
-  //   email,
-  //   dateOfBirth: new Date(dateOfBirth),
-  // });
-
-  
+  await axiosInstance.post("/auth/signup", {
+    username,
+    email,
+    dateOfBirth: new Date(dateOfBirth),
+    password,
+  });
 };

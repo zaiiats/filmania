@@ -1,7 +1,7 @@
 import { axiosInstance } from "@/lib/axios";
 
 export const logout = async () => {
-  await axiosInstance.post("/logout");
+  await axiosInstance.post("/auth/logout");
 
   localStorage.removeItem("accessToken");
 };

@@ -1,0 +1,46 @@
+services:
+  api:
+    container_name: api
+    build:
+      context: ./
+    volumes:
+      - ./:/app
+      - /app/node_modules
+    env_file:
+      - ./.env
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@pg:5432/postgres?schema=public
+      - REDIS_URL=redis://redis:6379
+      - CHOKIDAR_USEPOLLING=true
+      - WATCHPACK_POLLING=true
+    depends_on:
+      redis:
+        condition: service_started
+      pg:
+        condition: service_started
+    ports:
+      - "3001:3001"
+    restart: unless-stopped
+  pg:
+    image: postgres:16-alpine
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    container_name: pg
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    restart: always
+    volumes:
+      - redis_data:/data
+volumes:
+  pgdata:
+  redis_data:

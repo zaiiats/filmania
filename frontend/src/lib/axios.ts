@@ -1,15 +1,12 @@
 import axios, { AxiosError } from "axios";
+import { toast } from "sonner";
 
-const BACKEND_URL = "localhost:3000";
+const BACKEND_URL = "http://localhost:3001/api/v1";
 
 export const axiosInstance = axios.create({
   baseURL: BACKEND_URL,
   timeout: 10000,
-  headers: {
-    "Content-Type": "application/json",
-    Accept: "application/json",
-  },
-  withCredentials: import.meta.env.PROD, // uncomment we are sure
+  withCredentials: true,
 });
 
 axiosInstance.interceptors.request.use(
@@ -31,6 +28,18 @@ axiosInstance.interceptors.request.use(
 
 axiosInstance.interceptors.response.use(
   (response) => {
+    console.log(response.config.url);
+    if (response.config.url === "/auth/login") {
+      const csrfCookie = document.cookie
+        .split(";")
+        .find((cookie) => /csrf_token/.test(cookie))
+        ?.split("=")[1];
+
+      if (csrfCookie) {
+        axiosInstance.defaults.headers.common["x-csrf-token"] = csrfCookie;
+      }
+    }
+
     return response;
   },
   async (error: AxiosError) => {
@@ -38,19 +47,11 @@ axiosInstance.interceptors.response.use(
       _retry: boolean;
     };
 
-    const refreshToken = localStorage.getItem("refreshToken");
-
-    if (
-      refreshToken &&
-      error?.response?.status === 401 &&
-      ogRequest?._retry !== true
-    ) {
+    if (error?.response?.status === 401 && ogRequest?._retry !== true) {
       ogRequest._retry = true;
 
       try {
-        const data = await axios.post(`${BACKEND_URL}/auth/refresh`, {
-          refreshToken: refreshToken,
-        });
+        const data = await axios.get(`${BACKEND_URL}/auth/refresh`);
 
         const accessToken = data.data.accessToken;
 
@@ -65,7 +66,25 @@ axiosInstance.interceptors.response.use(
         window.location.href = "/login";
         return Promise.reject(error);
       }
+    } else if (error.response?.status.toString().startsWith("5")) {
+      toast.error("Server Error");
     }
     return Promise.reject(error);
   },
 );
+
+export const tmdbClient = axios.create({
+  baseURL: "https://api.themoviedb.org/3",
+  headers: {
+    Authorization: `Bearer ${import.meta.env.VITE_TMDB_ACCESS_TOKEN}`,
+    Accept: "application/json",
+  },
+});
+
+interface BackendErrorInterface {
+  message: string;
+  status: string;
+  params: { name: string; code: string }[];
+}
+
+export type BackendErrorResponseType = AxiosError<BackendErrorInterface>;

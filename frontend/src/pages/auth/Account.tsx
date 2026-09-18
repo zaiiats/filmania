@@ -1,7 +1,8 @@
 import { useTypedSelector } from "@/store/store";
 import styled from "styled-components";
 import Button from "@/components/reusable/Button";
-import { useLogoutMutation } from "@/hooks/useLogoutMutation";
+import { useLogoutMutation } from "@/hooks/auth/useLogoutMutation";
+import AccountAvatar from "@/components/AccountAvatar";
 
 const StyledWrapper = styled.div`
   display: flex;
@@ -9,13 +10,6 @@ const StyledWrapper = styled.div`
   align-items: center;
   gap: 24px;
   padding: 40px 20px;
-`;
-
-const Avatar = styled.img`
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  object-fit: cover;
 `;
 
 const UserInfo = styled.div`
@@ -36,9 +30,7 @@ const Email = styled.p`
 `;
 
 export default function Account() {
-  const { username, email, profilePicture } = useTypedSelector(
-    (store) => store.user,
-  );
+  const { username, email } = useTypedSelector((store) => store.user);
 
   const { mutate, isPending } = useLogoutMutation();
 
@@ -48,10 +40,7 @@ export default function Account() {
 
   return (
     <StyledWrapper>
-      <Avatar
-        src={profilePicture || "https://picsum.photos/id/237/200/300"}
-        alt={username || "Profile picture"}
-      />
+      <AccountAvatar />
 
       <UserInfo>
         <Username>{username}</Username>

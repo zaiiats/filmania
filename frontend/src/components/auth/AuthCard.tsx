@@ -59,6 +59,21 @@ export const FormGroup = styled.div`
     }
   }
 
+  textarea {
+    border: var(--border-button);
+    background-color: var(--bg);
+    padding: 0.5rem 0.65rem;
+    border-radius: var(--border-radius);
+    color: var(--text-h);
+    width: 100%;
+    outline: none;
+    resize: none;
+
+    :focus {
+      border-color: #4f46e5;
+    }
+  }
+
   input[type="date"]::-webkit-calendar-picker-indicator {
     fill: green;
     filter: invert(1);

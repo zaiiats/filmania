@@ -13,12 +13,14 @@ import Logout from "./pages/auth/Signup";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { queryClientInstance } from "./lib/queryClient";
-import { useInitAuth } from "./hooks/useInitAuth";
+import { useRefreshQuery } from "./hooks/auth/useRefreshQuery";
 import Spinner from "./components/reusable/Spinner";
 import Account from "./pages/auth/Account";
 import type { ReactNode } from "react";
 import VerifyEmail from "./pages/auth/VerifyEmail";
 import { Toaster } from "sonner";
+import Movie from "./pages/movie/Movie";
+import Review from "./pages/movie/Review";
 
 const StyledRootLayout = styled.div`
   display: flex;
@@ -42,7 +44,7 @@ const StyledLoadingLayout = styled.div`
 `;
 
 function RootLayout() {
-  const { isLoading } = useInitAuth();
+  const { isLoading } = useRefreshQuery();
 
   if (isLoading) {
     return (
@@ -63,6 +65,16 @@ function RootLayout() {
   );
 }
 
+function ProtectedFromAuth({ children }: { children: ReactNode }) {
+  const accessToken = localStorage.getItem("accessToken");
+
+  if (accessToken) {
+    return <Navigate to="/" replace />;
+  }
+
+  return children;
+}
+
 function Protected({ children }: { children: ReactNode }) {
   const accessToken = localStorage.getItem("accessToken");
 
@@ -80,8 +92,23 @@ const router = createBrowserRouter([
     errorElement: <ErrorElement />,
     children: [
       { index: true, element: <Home /> },
-      { path: "/login", element: <Login /> },
-      { path: "/signup", element: <Logout /> },
+      { path: "/movie/:movieId", element: <Movie /> },
+      {
+        path: "/login",
+        element: (
+          <ProtectedFromAuth>
+            <Login />
+          </ProtectedFromAuth>
+        ),
+      },
+      {
+        path: "/signup",
+        element: (
+          <ProtectedFromAuth>
+            <Logout />
+          </ProtectedFromAuth>
+        ),
+      },
       {
         path: "/account",
         element: (
@@ -94,6 +121,14 @@ const router = createBrowserRouter([
         path: "/verify-email",
         element: <VerifyEmail />,
       },
+      {
+        path: "/review/:movieId",
+        element: (
+          <Protected>
+            <Review />
+          </Protected>
+        ),
+      },
       { path: "*", element: <NotFound /> },
     ],
   },
@@ -103,7 +138,7 @@ function App() {
   return (
     <Provider store={store}>
       <QueryClientProvider client={queryClientInstance}>
-        <Toaster position="top-right" richColors theme="dark"/>
+        <Toaster position="top-right" richColors theme="dark" />
         <RouterProvider router={router} />
         <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>

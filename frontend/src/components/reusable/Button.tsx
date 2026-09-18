@@ -1,19 +1,21 @@
-interface ButtonInterface {
-  size?: "small" | "big";
-  variant?: "outline" | "filled";
-  onClick?: () => void;
-  children: ReactNode;
-  type?: "submit" | "reset" | "button";
-  style?: CSSProperties;
-  isDisabled?: boolean;
-}
-
-import type { CSSProperties, ReactNode } from "react";
+import type { ComponentPropsWithoutRef, ElementType, ReactNode } from "react";
 import styled from "styled-components";
 
+type ButtonBaseProps<E extends ElementType = "button"> = {
+  size?: "small" | "big";
+  variant?: "outline" | "filled";
+  children: ReactNode;
+  type?: "submit" | "reset" | "button";
+  isDisabled?: boolean;
+  as?: E;
+};
+
+type ButtonProps<E extends ElementType = "button"> = ButtonBaseProps<E> &
+  ComponentPropsWithoutRef<E>;
+
 const StyledButton = styled.button<{
-  $size: ButtonInterface["size"];
-  $variant: ButtonInterface["variant"];
+  $size: ButtonProps["size"];
+  $variant: ButtonProps["variant"];
 }>`
   display: flex;
   align-items: center;
@@ -39,25 +41,32 @@ const StyledButton = styled.button<{
   &:active {
     transform: scale(0.98);
   }
+  &:disabled {
+    cursor: not-allowed;
+    transform: none;
+    opacity: 0.5;
+  }
 `;
 
-export default function Button({
+export default function Button<E extends ElementType = "button">({
+  as,
   size = "small",
   variant = "outline",
-  onClick,
   type = "button",
   isDisabled = false,
   children,
-  style,
-}: ButtonInterface) {
+  ...restProps
+}: ButtonProps<E>) {
+  const Component = as || "button";
+
   return (
     <StyledButton
-      style={style}
+      as={Component}
       type={type}
       $size={size}
       $variant={variant}
-      onClick={onClick}
       disabled={isDisabled}
+      {...restProps}
     >
       {children}
     </StyledButton>

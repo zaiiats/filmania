@@ -7,10 +7,10 @@ export const verifyEmail = async ({
   otp: string;
   email: string;
 }) => {
-  const data = await axiosInstance.post("/verify-email", {
-    otp,
+  await axiosInstance.post("/auth/verify-email", {
+    token: otp,
     email,
   });
 
-  console.log(data);
+  return undefined;
 };

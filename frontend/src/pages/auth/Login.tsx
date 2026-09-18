@@ -1,6 +1,5 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import z from "zod";
 import Button from "@/components/reusable/Button";
 import AuthCard, {
   ButtonsGroup,
@@ -9,35 +8,57 @@ import AuthCard, {
   StyledForm,
   VerticalFormGroup,
 } from "@/components/auth/AuthCard";
-import { userLoginSchema } from "@/utils/validation";
-import { useLoginMutation } from "@/hooks/useLoginMutation";
-
-type LoginFormValues = z.infer<typeof userLoginSchema>;
+import { userLoginSchema, type LoginFormValues } from "@/utils/validation";
+import { useLoginMutation } from "@/hooks/auth/useLoginMutation";
+import { useEffect } from "react";
+import { toast } from "sonner";
+import { useOauthLoginMutation } from "@/hooks/auth/useOauthLoginMutation";
 
 export default function Login() {
   const {
     handleSubmit,
     register,
-    reset,
+    setError,
     formState: { errors, isLoading },
   } = useForm({
     resolver: zodResolver(userLoginSchema),
     mode: "onBlur",
     defaultValues: {
-      username: "Zaiiats",
-      email: "zaiats@email.com",
+      username: "Zaiiatsw",
+      password: "pass123$",
       isSaved: true,
     },
-  });
+  });  
 
-  const { mutate, error, data } = useLoginMutation();
+  const { mutate: loginMutation, error: loginError } = useLoginMutation();
 
-  console.log(error?.message, data);
+  const { mutate: oauthMutation } = useOauthLoginMutation();
 
   async function onSubmit(data: LoginFormValues) {
-    mutate(data);
-    reset();
+    loginMutation(data);
   }
+
+  useEffect(() => {
+    if (loginError?.response?.data) {
+      const errorFields = loginError.response.data.params;
+      if (errorFields) {
+        errorFields.forEach((field) => {
+          console.log(field);
+
+          setError(field.name as keyof LoginFormValues, {
+            message: field.code,
+          });
+        });
+        console.log(errorFields);
+      } else {
+        console.log(loginError?.response?.data);
+
+        if (loginError?.response?.data.message === "invalid_credentials") {
+          toast.error("invalid_credentials");
+        }
+      }
+    }
+  }, [loginError, setError]);
 
   return (
     <AuthCard title="Login">
@@ -52,18 +73,27 @@ export default function Login() {
           <p>{errors?.username && errors?.username.message}</p>
         </FormGroup>
         <FormGroup>
-          <label htmlFor="email">Email</label>
+          <label htmlFor="password">Password</label>
           <input
-            placeholder="Input text..."
+            placeholder="Input password..."
             type="text"
-            {...register("email")}
+            {...register("password")}
           />
-          <p>{errors?.email && errors?.email.message}</p>
+          <p>{errors?.password && errors?.password.message}</p>
         </FormGroup>
         <VerticalFormGroup>
           <label htmlFor="isSaved">Is saved</label>
           <CheckBoxGroup type="checkbox" {...register("isSaved")} />
         </VerticalFormGroup>
+        <Button
+          style={{ width: "100%" }}
+          onClick={() => oauthMutation("google")}
+          isDisabled={isLoading}
+          as="a"
+          href="http://localhost:3001/api/v1/auth/oauth/google"
+        >
+          Login with Google
+        </Button>
         <ButtonsGroup>
           <Button style={{ width: "100%" }} type="reset" isDisabled={isLoading}>
             Reset

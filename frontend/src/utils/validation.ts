@@ -8,6 +8,11 @@ const usernameSchema = z
 
 const emailSchema = z.email("not_email");
 
+const passwordSchema = z
+  .string()
+  .min(8, "password_min_length")
+  .max(100, "password_max_length");
+
 const dateOfBirth = z.string().refine(
   (val) => {
     const passedDate = dayjs(val);
@@ -23,7 +28,7 @@ const dateOfBirth = z.string().refine(
 
 export const userLoginSchema = z.object({
   username: usernameSchema,
-  email: emailSchema,
+  password: passwordSchema,
   isSaved: z.boolean(),
 });
 
@@ -31,6 +36,8 @@ export const userSignupSchema = z.object({
   username: usernameSchema,
   email: emailSchema,
   dateOfBirth: dateOfBirth,
+  password: passwordSchema,
 });
 
+export type LoginFormValues = z.infer<typeof userLoginSchema>;
 export type SignupFormValues = z.infer<typeof userSignupSchema>;

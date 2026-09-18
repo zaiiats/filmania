@@ -1,6 +1,8 @@
 import AuthCard, { ButtonsGroup } from "@/components/auth/AuthCard";
 import Button from "@/components/reusable/Button";
-import { useVerifyEmailMutation } from "@/hooks/useVerifyEmailMutation";
+import { useResendVerifyEmailMutation } from "@/hooks/auth/useResendVerifyEmailMutation";
+import { useVerifyEmailMutation } from "@/hooks/auth/useVerifyEmailMutation";
+import { AxiosError } from "axios";
 import { OTPInput, REGEXP_ONLY_DIGITS } from "input-otp";
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
@@ -35,12 +37,17 @@ const Slot = styled.li<{ $isActive: boolean }>`
 const OTP_LENGTH = 6;
 
 export default function VerifyEmail() {
-  const [otp, setOtp] = useState<string>("1");
+  const [otp, setOtp] = useState<string>("");
+  const [isShowingResend, setIsShowingResend] = useState<boolean>(false);
 
   const [searchParams] = useSearchParams();
   const email = searchParams.get("email");
 
-  const { isPending, mutate } = useVerifyEmailMutation();
+  const { isPending: verifyEmailIsPending, mutate: verifyEmailMutate } =
+    useVerifyEmailMutation();
+
+  const { isPending: resendEmailIsPending, mutate: resendEmailMutate } =
+    useResendVerifyEmailMutation();
 
   const onReset = () => {
     setOtp("");
@@ -53,8 +60,26 @@ export default function VerifyEmail() {
       toast.error("No email provided");
       return;
     }
-    mutate({ otp, email });
-    onReset();
+    verifyEmailMutate(
+      { otp, email },
+      {
+        onError: (error: unknown) => {
+          if (error instanceof AxiosError && error?.response?.data.message) {
+            setIsShowingResend(true);
+          }
+          onReset();
+        },
+      },
+    );
+  };
+
+  const onResend = () => {
+    if (!email) {
+      toast.error("No email provided");
+      return;
+    }
+    resendEmailMutate(email);
+    setIsShowingResend(false);
   };
 
   return (
@@ -85,7 +110,7 @@ export default function VerifyEmail() {
             style={{ width: "100%" }}
             type="reset"
             onClick={onReset}
-            isDisabled={isPending}
+            isDisabled={verifyEmailIsPending || resendEmailIsPending}
           >
             Reset
           </Button>
@@ -94,11 +119,23 @@ export default function VerifyEmail() {
             type="submit"
             onClick={onSubmit}
             variant="filled"
-            isDisabled={isPending}
+            isDisabled={verifyEmailIsPending || resendEmailIsPending}
           >
             Verify
           </Button>
         </ButtonsGroup>
+
+        {isShowingResend && (
+          <Button
+            style={{ width: "100%", marginTop: "32px" }}
+            type="submit"
+            onClick={onResend}
+            variant="outline"
+            isDisabled={verifyEmailIsPending || resendEmailIsPending}
+          >
+            Resend Verification
+          </Button>
+        )}
       </AuthCard>
     </StyledWrapper>
   );

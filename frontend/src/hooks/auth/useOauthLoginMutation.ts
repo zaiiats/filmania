@@ -1,8 +1,8 @@
 import { api } from "@/api/api";
 import { useMutation } from "@tanstack/react-query";
 
-export function useVerifyEmailMutation () {
+export function useOauthLoginMutation() {
   return useMutation({
-    mutationFn:api.verifyEmail
-  })
+    mutationFn: api.auth.oauthLogin,
+  });
 }
