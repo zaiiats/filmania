@@ -14,6 +14,7 @@ export const getReviewForUserController = asyncCatcher(
         review: true,
         rating: true,
         fileName: true,
+        movieExtId: true,
       },
     });
 

@@ -27,7 +27,7 @@ export default function ErrorElement() {
   return (
     <GenericError
       title="Unexpected Error!"
-      message={<p>{(error as Error)?.message}</p>}
+      message={<p>{(error as Error)?.message || "Try doing this operation later"}</p>}
     />
   );
 }

@@ -2,6 +2,7 @@ import Spinner from "@/components/reusable/Spinner";
 import { useGetMovieQuery } from "@/hooks/movies/useGetMovieQuery";
 import { useTypedSelector } from "@/store/store";
 import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "sonner";
 import styled from "styled-components";
 
 const StyledWrapper = styled.div`
@@ -79,6 +80,11 @@ const Title = styled.h1`
   margin: 0;
   font-size: 36px;
   line-height: 1.2;
+`;
+
+const CopyText = styled.p`
+  cursor: copy;
+  user-select: none;
 `;
 
 const Tagline = styled.p`
@@ -214,10 +220,25 @@ export default function Movie() {
     );
   }
 
+  function copyLink(title: string) {
+    try {
+      navigator.clipboard.writeText(title);
+    } catch (error: unknown) {
+      if (
+        error &&
+        typeof error === "object" &&
+        "message" in error &&
+        typeof error.message === "string"
+      ) {
+        toast.error(error.message);
+      }
+    }
+  }
+
   return (
     <StyledWrapper>
       <TopBar>
-        <ActionButton onClick={() => navigate("/")}>Назад</ActionButton>
+        <ActionButton onClick={() => navigate(-1)}>Назад</ActionButton>
       </TopBar>
 
       <ContentFlex>
@@ -231,15 +252,16 @@ export default function Movie() {
         )}
 
         <InfoBox>
-          <Title>{imdbData?.title}</Title>
+          <Title>{imdbData?.title}</Title>{" "}
+          <CopyText onClick={() => copyLink(window.location.href)}>
+            Скопіювати лінк
+          </CopyText>
           {imdbData?.tagline && <Tagline>"{imdbData.tagline}"</Tagline>}
-
           <Genres>
             {imdbData?.genres?.map((genre) => (
               <GenreTag key={genre.id}>{genre.name}</GenreTag>
             ))}
           </Genres>
-
           <TextBlock>
             <div>
               <strong>Оцінка:</strong> {imdbData?.vote_average.toFixed(1)} / 10
@@ -256,7 +278,6 @@ export default function Movie() {
               {imdbData.runtime ? `${imdbData.runtime} хв` : "Невідомо"}
             </div>
           </TextBlock>
-
           <TextBlock>
             <h3 style={{ color: "#fff", margin: "8px 0 0" }}>Опис</h3>
             <p style={{ margin: 0 }}>

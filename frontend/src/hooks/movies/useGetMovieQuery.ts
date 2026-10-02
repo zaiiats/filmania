@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 
 export function useGetMovieQuery(movieName: string | null) {
   return useQuery({
-    queryFn: () => api.imdb.getMovie(movieName),
+    queryFn: ({ signal }) => api.imdb.getMovie(movieName, signal),
     queryKey: queryKeys.getMovie(movieName),
   });
 }

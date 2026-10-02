@@ -37,6 +37,9 @@ const AvatarEditContainer = styled.div`
   }
 `;
 
+export const DEFAULT_IMAGE_SRC =
+  "https://cdytzhprdbfgsngrvxdt.supabase.co/storage/v1/object/public/usersProfile/defaultUser.jpg";
+
 export default function AccountAvatar() {
   const { username, profilePicture } = useTypedSelector((store) => store.user);
   const ref = useRef<HTMLInputElement | null>(null);
@@ -61,14 +64,14 @@ export default function AccountAvatar() {
   return (
     <StyledAvatar>
       <Avatar
-        src={
-          profilePicture ||
-          "https://cdytzhprdbfgsngrvxdt.supabase.co/storage/v1/object/public/usersProfile/defaultUser.jpg"
-        }
+        src={profilePicture || DEFAULT_IMAGE_SRC}
         alt={username || "Profile picture"}
         referrerPolicy="no-referrer"
       />
-      <AvatarEditContainer onClick={handleChangeAvatar}>
+      <AvatarEditContainer
+        data-testid="avatar-edit-container"
+        onClick={handleChangeAvatar}
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="20"

@@ -22,6 +22,7 @@ interface FindMovieResponse {
 export const findMovie = async (
   name: string | null,
   page: number,
+  signal: AbortSignal,
 ): Promise<FindMovieResponse> => {
   if (!name || name.trim() === "") {
     return { page: page, data: [], totalPages: page };
@@ -38,6 +39,7 @@ export const findMovie = async (
       Accept: "application/json",
     },
     withCredentials: false,
+    signal: signal,
   });
 
   console.log(data);

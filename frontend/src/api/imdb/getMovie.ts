@@ -25,6 +25,7 @@ interface MovieDetailsInterface {
 
 export const getMovie = async (
   id: string | number | null,
+  signal: AbortSignal,
 ): Promise<MovieDetailsInterface | null> => {
   if (!id) {
     return null;
@@ -39,6 +40,7 @@ export const getMovie = async (
       Accept: "application/json",
     },
     withCredentials: false,
+    signal: signal,
   });
 
   const reviewData = await axiosInstance.get(`/review/movie/${id}`);

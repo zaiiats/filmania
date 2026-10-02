@@ -5,7 +5,7 @@ import {
 } from "@reduxjs/toolkit";
 import { useDispatch, useSelector } from "react-redux";
 
-interface UserInterface {
+export interface UserInterface {
   username: string | null;
   email: string | null;
   profilePicture: string | null;

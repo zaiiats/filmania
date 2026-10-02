@@ -10,9 +10,7 @@ export const queryKeys = {
     "search",
     `${searchQuery}-${page}`,
   ],
-  getMovie: (movieName: string | null) => [
-    ...queryKeys.imdb,
-    "get",
-    movieName,
-  ],
+  getMovie: (movieId: string | null) => [...queryKeys.imdb, "get", movieId],
+
+  getReviews: (userId: string | null) => [...queryKeys.review, "user", userId],
 };

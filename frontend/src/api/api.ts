@@ -9,6 +9,7 @@ import { updateAvatar } from "./auth/updateAvatar";
 import { findMovie } from "./imdb/findMovie";
 import { getMovie } from "./imdb/getMovie";
 import { createReview } from "./review/createReview";
+import { getReviews } from "./review/getReviews";
 
 export const api = {
   auth: {
@@ -27,5 +28,6 @@ export const api = {
   },
   review: {
     createReview,
+    getReviews,
   },
 };
